@@ -16,5 +16,8 @@ class SyncGithub
 
     puts "👇 Sync Stars"
     FetchStars.new(ENV["REPO_FULL_NAME"]).run
+
+    puts "👇 Sync Region"
+    SyncStars.new.run
   end
 end

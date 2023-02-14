@@ -51,3 +51,5 @@ gem "pry-rails", "~> 0.3.9"
 gem "http", "~> 5.1"
 
 gem "did_you_mean", "~> 1.6"
+
+gem "geocoder", "~> 1.8"

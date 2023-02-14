@@ -90,6 +90,7 @@ GEM
     ffi-compiler (1.0.1)
       ffi (>= 1.0.0)
       rake
+    geocoder (1.8.1)
     globalid (1.1.0)
       activesupport (>= 5.0)
     http (5.1.1)
@@ -195,6 +196,7 @@ DEPENDENCIES
   debug
   did_you_mean (~> 1.6)
   dotenv-rails
+  geocoder (~> 1.8)
   http (~> 5.1)
   mysql2 (~> 0.5)
   pry-rails (~> 0.3.9)

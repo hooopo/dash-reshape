@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_02_13_183733) do
+ActiveRecord::Schema[7.0].define(version: 2023_02_14_202017) do
   create_table "forks", charset: "utf8mb4", collation: "utf8mb4_bin", force: :cascade do |t|
     t.bigint "parent"
     t.string "author"
@@ -95,6 +95,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_02_13_183733) do
     t.datetime "starred_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "region"
     t.index ["repo_id", "user_id"], name: "index_stars_on_repo_id_and_user_id", unique: true
   end
 

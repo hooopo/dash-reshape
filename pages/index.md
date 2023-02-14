@@ -1,5 +1,6 @@
 # Welcome to Evidence! 👋
 
+## The running total of stars per month
 
 ```star_history
 WITH monthly_stars AS (
@@ -14,28 +15,57 @@ ORDER BY 1 ASC
 
 <LineChart 
     data={star_history}  
-    title="The running total of stars per month"
     x=month 
     y=total_stars
 />
 
+## Geographic distribution of stargazers for repo
+
 ```star_region
-SELECT region, COUNT(*) AS users_count
+SELECT region AS name, COUNT(*) AS value
 FROM stars
-WHERE region IS NOT NULL
-GROUP BY region
-ORDER BY users_count DESC
-LIMIT 10;
+WHERE region IS NOT NULL AND region != 'N/A'
+GROUP BY 1
+ORDER BY 2 DESC
+LIMIT 5;
 ```
 
-<BarChart 
-    data={star_region}  
-    title="Geographic distribution of stargazers for repo's user base"
-    x=region 
-    y=users_count
-   
+<ECharts config={
+    {
+        tooltip: {
+            formatter: '{b}: {c}'
+        },
+      series: [
+        {
+          type: 'treemap',
+          visibleMin: 400,
+          label: {
+            show: true,
+            formatter: '{b}'
+          },
+          itemStyle: {
+            borderColor: '#fff'
+          },
+          roam: false,
+          nodeClick: false,
+          data: star_region,
+          breadcrumb: {
+            show: false
+          }
+        }
+      ]
+      }
+    }
 />
 
+
+```star_company
+select REPLACE(LOWER(company), '@', ''), count(*) 
+from stars 
+group by 1 
+order by 2 desc 
+limit 20;
+```
 
 
 ## Schema

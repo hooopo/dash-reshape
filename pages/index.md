@@ -1,5 +1,5 @@
 # Welcome to Evidence! 👋
-Build a polished business intelligence system using only SQL & Markdown.
+
 
 ```star_history
 WITH monthly_stars AS (
@@ -17,6 +17,23 @@ ORDER BY 1 ASC
     title="The running total of stars per month"
     x=month 
     y=total_stars
+/>
+
+```star_region
+SELECT region, COUNT(*) AS users_count
+FROM stars
+WHERE region IS NOT NULL
+GROUP BY region
+ORDER BY users_count DESC
+LIMIT 10;
+```
+
+<BarChart 
+    data={star_region}  
+    title="Geographic distribution of stargazers for repo's user base"
+    x=region 
+    y=users_count
+   
 />
 
 

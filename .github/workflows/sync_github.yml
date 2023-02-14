@@ -1,0 +1,49 @@
+name: Sync GitHub Data
+
+on:
+  schedule:
+    - cron: '0 * * * *'
+  workflow_dispatch:
+
+
+jobs:
+  run_script:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+
+    - name: Set up Ruby
+      uses: ruby/setup-ruby@v1
+      with:
+        ruby-version: 3.2
+        bundler-cache: true
+
+    - name: Install dependencies
+      run: |
+        cd reshape
+        bundle install
+
+    - name: Migration
+      env:
+        DATABASE_URL: ${{ secrets.DATABASE_URL }}
+        ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}
+        REPO_FULL_NAME: ${{ secrets.REPO_FULL_NAME }}
+      run: |
+        cd reshape
+        bundle exec rails db:create
+        bundle exec rails db:migrate
+
+    - name: Sync GitHub Data
+      env:
+        DATABASE_URL: ${{ secrets.DATABASE_URL }}
+        ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}
+        REPO_FULL_NAME: ${{ secrets.REPO_FULL_NAME }}
+      run: |
+        cd reshape
+        bundle exec rails runner "SyncGithub.run!"
+
+    - name: Rebuild Evidence
+      run: curl -X POST -d {} ${{ secrets.BUILD_HOOK }}
+

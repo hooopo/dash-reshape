@@ -45,5 +45,8 @@ jobs:
         bundle exec rails runner "SyncGithub.run!"
 
     - name: Rebuild Evidence
-      run: curl -X POST -d {} ${{ secrets.BUILD_HOOK }}
+      run: |
+        if [ -n "${{ secrets.BUILD_HOOK }}" ]; then
+          curl -X POST -d {} ${{ secrets.BUILD_HOOK }}
+        fi
 

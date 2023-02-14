@@ -1,6 +1,26 @@
 # Welcome to Evidence! 👋
 Build a polished business intelligence system using only SQL & Markdown.
 
+```star_history
+WITH monthly_stars AS (
+  SELECT DATE_FORMAT(starred_at, '%Y-%m') AS month, COUNT(*) AS total_stars
+  FROM stars
+  GROUP BY month
+)
+SELECT month, total_stars AS month_stars, SUM(total_stars) OVER (ORDER BY month) AS total_stars
+FROM monthly_stars
+ORDER BY 1 ASC
+```
+
+<LineChart 
+    data={star_history}  
+    title="The running total of stars per month"
+    x=month 
+    y=total_stars
+/>
+
+
+
 ## Schema
 
 ```dbs

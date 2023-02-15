@@ -48,6 +48,32 @@ ORDER BY 1 ASC
     y=total_stars
 />
 
+## Top contributors analysis
+
+```top_contributors
+select author, 
+  count(*) as pr_cnt, 
+  concat('https://github.com/', author, '.png?size=50') as avatar,
+  concat('https://github.com/', author) as author_url,
+  sum(changed_files) as total_changed_files_num0k,
+  sum(additions) as total_additions_num0k,
+  sum(deletions) as total_deletions_num0k
+from pull_requests 
+where author not regexp 'bot' 
+group by 1 
+order by 2 desc 
+limit 100;
+```
+
+<DataTable search=true data={top_contributors}>
+    <Column id=avatar contentType=image height=30px align=center />
+    <Column id=author_url contentType=link linkLabel=author />
+    <Column id=pr_cnt align=left />
+    <Column id=total_changed_files_num0k />
+    <Column id=total_additions_num0k />
+    <Column id=total_deletions_num0k />
+</DataTable>
+
 ## Repository Contributor Analysis
 
 * `COLLABORATOR`: Author has been invited to collaborate on the repository.

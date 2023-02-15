@@ -1,4 +1,4 @@
-# ✨ Analysis of GitHub repo stars
+# GitHub Repository Dashboard Reshape
 
 
 ## Basic Info
@@ -46,6 +46,27 @@ ORDER BY 1 ASC
     data={star_history}  
     x=month 
     y=total_stars
+/>
+
+## Repository Contributor Analysis
+
+```contributors_per_type
+select author_association, date_format(created_at, '%Y-%m-01') as month, count(distinct author) as users_cnt from pull_requests group by 1, 2 ;
+```
+* `COLLABORATOR`: Author has been invited to collaborate on the repository.
+* `CONTRIBUTOR`: Author has previously committed to the repository.
+* `FIRST_TIMER`: Author has not previously committed to GitHub.
+* `FIRST_TIME_CONTRIBUTOR`: Author has not previously committed to the repository.
+* `MANNEQUIN`: Author is a placeholder for an unclaimed user.
+* `MEMBER`: Author is a member of the organization that owns the repository.
+* `NONE`: Author has no association with the repository.
+* `OWNER`: Author is the owner of the repository.
+
+<AreaChart 
+    data={contributors_per_type}  
+    x=month 
+    y=users_cnt
+    series=author_association
 />
 
 ## Stars per month
@@ -105,10 +126,20 @@ LIMIT 5;
 />
 
 
+## Company information about Stargazers
+
 ```star_company
-select REPLACE(LOWER(company), '@', ''), count(*) 
+select REPLACE(LOWER(company), '@', '') as company, count(*) as users_cnt
 from stars 
+where company is not null and company <> 'none'
 group by 1 
 order by 2 desc 
-limit 20;
+limit 15;
 ```
+
+<BarChart 
+    data={star_company} 
+    x=company 
+    y=users_cnt 
+/>
+

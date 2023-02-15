@@ -165,3 +165,19 @@ limit 15;
     y=users_cnt 
 />
 
+## Code change analysis
+
+```code_changes
+select date_format(created_at, '%Y-%m-01') as month,  
+  sum(additions ) as total_additions, 
+  sum(deletions) as total_deletions
+from pull_requests 
+group by 1 
+order by 1 asc;
+```
+
+<AreaChart 
+    data={code_changes}  
+    x=month 
+    y={["total_additions", "total_deletions"]}
+/>

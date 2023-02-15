@@ -1,5 +1,34 @@
 # ✨ Analysis of GitHub repo stars
 
+
+## Basic Info
+
+```info
+select 'Full Name' as name,  concat(owner, '/', name) as value from repos
+union
+select 'Description' as name,  description as value from repos
+union
+select 'License' as name, license as value from repos
+union
+select 'Language' as name, language as value from repos
+union
+select 'Fork Count' as name, fork_count as value from repos
+union
+select 'Stargazer Count' as name, stargazer_count as value from repos
+union
+select 'Issue Count' as name, count(*) as value from issues 
+union 
+select 'Pull Request Count' as name, count(*) as value from pull_requests
+union
+select 'Contributors' as name, count(distinct author) as value from pull_requests
+```
+
+<DataTable
+    data={info} 
+    rows=20
+    rowNumbers=false
+/>
+
 ## The running total of stars per month
 
 ```star_history

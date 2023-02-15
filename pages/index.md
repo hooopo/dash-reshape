@@ -1,4 +1,4 @@
-# GitHub Repository Dashboard Reshape
+# Repository Dashboard Reshape
 
 
 ## Basic Info
@@ -50,9 +50,6 @@ ORDER BY 1 ASC
 
 ## Repository Contributor Analysis
 
-```contributors_per_type
-select author_association, date_format(created_at, '%Y-%m-01') as month, count(distinct author) as users_cnt from pull_requests group by 1, 2 ;
-```
 * `COLLABORATOR`: Author has been invited to collaborate on the repository.
 * `CONTRIBUTOR`: Author has previously committed to the repository.
 * `FIRST_TIMER`: Author has not previously committed to GitHub.
@@ -62,12 +59,37 @@ select author_association, date_format(created_at, '%Y-%m-01') as month, count(d
 * `NONE`: Author has no association with the repository.
 * `OWNER`: Author is the owner of the repository.
 
+### Pull Request
+
+```contributors_per_type
+select author_association, date_format(created_at, '%Y-%m-01') as month, count(distinct author) as users_cnt from pull_requests group by 1, 2 ;
+```
+
 <AreaChart 
     data={contributors_per_type}  
     x=month 
     y=users_cnt
     series=author_association
 />
+
+### Issue
+
+```contributors_per_type_issue
+select author_association, 
+  date_format(created_at, '%Y-%m-01') as month, 
+  count(distinct author) as users_cnt 
+from issues 
+group by 1, 2 ;
+```
+
+<AreaChart 
+    data={contributors_per_type_issue}  
+    x=month 
+    y=users_cnt
+    series=author_association
+/>
+
+
 
 ## Stars per month
 
@@ -86,7 +108,7 @@ select author_association, date_format(created_at, '%Y-%m-01') as month, count(d
     y=total_stars
 />
 
-## Geographic distribution of stargazers for repo
+## Geographic distribution of stargazers
 
 ```star_region
 SELECT region AS name, COUNT(*) AS value

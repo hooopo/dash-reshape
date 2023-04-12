@@ -29,7 +29,6 @@ ActiveRecord::Schema[7.0].define(version: 2023_02_14_202017) do
     t.string "title"
     t.boolean "closed"
     t.datetime "closed_at"
-    t.string "url"
     t.string "state"
     t.integer "number"
     t.string "author"
@@ -97,11 +96,6 @@ ActiveRecord::Schema[7.0].define(version: 2023_02_14_202017) do
     t.datetime "updated_at", null: false
     t.string "region"
     t.index ["repo_id", "user_id"], name: "index_stars_on_repo_id_and_user_id", unique: true
-  end
-
-  create_table "test_tables", charset: "utf8mb4", collation: "utf8mb4_bin", force: :cascade do |t|
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
   end
 
 end

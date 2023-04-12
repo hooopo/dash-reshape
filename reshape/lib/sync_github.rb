@@ -1,23 +1,24 @@
 class SyncGithub
   def self.run!
     raise("REPO_FULL_NAME env missing, please set it") if ENV["REPO_FULL_NAME"].blank?
-    
-    puts "👉 Sync repo info #{ENV['REPO_FULL_NAME']}"
-    FetchRepo.new(ENV["REPO_FULL_NAME"]).run 
+    ENV["REPO_FULL_NAME"].split(",").each do |repo_full_name|
+      puts "👉 Sync repo #{repo_full_name} info #{ENV['REPO_FULL_NAME']}"
+      FetchRepo.new(repo_full_name).run 
 
-    puts "👇 Sync Issues"
-    FetchIssues.new(ENV["REPO_FULL_NAME"]).run
+      puts "👇 Sync #{repo_full_name} Issues"
+      FetchIssues.new(repo_full_name).run
 
-    puts "👇 Sync PullRequests"
-    FetchPullRequests.new(ENV["REPO_FULL_NAME"]).run
+      puts "👇 Sync #{repo_full_name} PullRequests"
+      FetchPullRequests.new(repo_full_name).run
 
-    puts "👇 Sync Forks"
-    FetchForks.new(ENV["REPO_FULL_NAME"]).run
+      puts "👇 Sync #{repo_full_name} Forks"
+      FetchForks.new(repo_full_name).run
 
-    puts "👇 Sync Stars"
-    FetchStars.new(ENV["REPO_FULL_NAME"]).run
+      puts "👇 Sync #{repo_full_name} Stars"
+      FetchStars.new(repo_full_name).run
 
-    puts "👇 Sync Region"
-    SyncRegion.new.run
+      puts "👇 Sync #{repo_full_name} Region"
+      SyncRegion.new.run
+    end
   end
 end

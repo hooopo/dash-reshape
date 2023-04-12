@@ -1,5 +1,6 @@
 class SyncRegion 
   def run 
+    return
     Star.where("location is not null and location <> '' and region is null").limit(5000).each do |star|
       region = Geocoder.search(star.location)&.first&.country
       if region.present?

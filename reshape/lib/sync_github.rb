@@ -17,6 +17,9 @@ class SyncGithub
       puts "👇 Sync #{repo_full_name} Stars"
       FetchStars.new(repo_full_name).run
 
+      puts "👇 Sync #{repo_full_name} user_id attribute"
+      FillUser.new.run
+
       puts "👇 Sync #{repo_full_name} Region"
       SyncRegion.new.run
     end

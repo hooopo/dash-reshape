@@ -12,68 +12,49 @@ class FetchStars
 
   def query(cusor)
     if cusor 
-      <<~GQL
-        query {
-          rateLimit {
-            limit
-            cost
-            remaining
-            resetAt
-          }
-          repository(name: "#{name}", owner: "#{owner}") {
-            stargazers(first: 100, after: "#{cusor}", orderBy: {field: STARRED_AT, direction: ASC}) {
-              pageInfo {
-                endCursor
-                hasNextPage
-              }
-              edges {
-                starredAt
-                node {
-                  databaseId
-                  login
-                  location
-                  company
-                  createdAt
-                  updatedAt
-                  
-                }
-              }
-            }
-          }
-        }
-      GQL
+      after = %Q|, after: "#{cusor}"|
     else
-      <<~GQL
-        query {
-          rateLimit {
-            limit
-            cost
-            remaining
-            resetAt
-          }
-          repository(name: "#{name}", owner: "#{owner}") {
-            stargazers(first: 100, orderBy: {field: STARRED_AT, direction: ASC}) {
-              pageInfo {
-                endCursor
-                hasNextPage
-              }
-              edges {
-                starredAt
-                node {
-                  databaseId
-                  login
-                  location
-                  company
-                  createdAt
-                  updatedAt
-                  
+      after = ''
+    end
+
+    <<~GQL
+      query {
+        rateLimit {
+          limit
+          cost
+          remaining
+          resetAt
+        }
+        repository(name: "#{name}", owner: "#{owner}") {
+          stargazers(first: 100, orderBy: {field: STARRED_AT, direction: ASC} #{after}) {
+            pageInfo {
+              endCursor
+              hasNextPage
+            }
+            edges {
+              starredAt
+              node {
+                databaseId
+                login
+                location
+                company
+                createdAt
+                updatedAt
+                twitterUsername
+                bio
+                following {
+                  totalCount
                 }
+                followers {
+                  totalCount
+                }
+                
               }
             }
           }
         }
-      GQL
-    end
+      }
+    GQL
   end
 
   def run
@@ -87,11 +68,13 @@ class FetchStars
 
       data = fetch_data(cusor)
       attrs = get_attr_list(data)
+      user_attrs = get_user_attrs(data)
       if attrs.blank?
         puts "All stars synced successed"
         break
       else
-        Star.upsert_all(attrs)
+        StarredRepo.upsert_all(attrs)
+        User.upsert_all(user_attrs)
       end
       cusor = end_cusor(data)
       
@@ -135,6 +118,28 @@ class FetchStars
     data.dig("data", "repository", "stargazers", "pageInfo", "hasNextPage")
   end
 
+  def get_user_attrs(data)
+    edges = data.dig("data", "repository", "stargazers", "edges")
+    if edges.nil?
+      puts data["errors"]
+      raise "GitHubb API issue, please try again later"
+    end
+    edges.map do |edge|
+      hash = edge["node"]
+      {
+        login: hash["login"],
+        id: hash["databaseId"],
+        location: hash["location"],
+        company: hash["company"],
+        created_at: hash["createdAt"],
+        updated_at: hash["updatedAt"],
+        twitter_username: hash["twitterUsername"],
+        followers_count: hash["followers"]["totalCount"],
+        following_count: hash["following"]["totalCount"],
+      }
+    end
+  end
+
   def get_attr_list(data)
     edges = data.dig("data", "repository", "stargazers", "edges")
     if edges.nil?
@@ -147,13 +152,7 @@ class FetchStars
       {
         repo_id: repo.id,
         user_id: hash["databaseId"],
-        created_at: hash["createdAt"],
-        updated_at: hash["updatedAt"],
-        starred_at: starred_at,
-        login: hash["login"],
-        company: hash["company"],
-        location: hash["location"]
-
+        starred_at: starred_at
       }
     end
   end

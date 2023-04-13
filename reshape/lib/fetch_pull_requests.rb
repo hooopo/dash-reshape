@@ -12,106 +12,64 @@ class FetchPullRequests
 
   def query(cusor)
     if cusor 
-      <<~GQL
-        query {
-          rateLimit {
-            limit
-            cost
-            remaining
-            resetAt
-          }
-          repository(name: "#{name}", owner: "#{owner}") {
-            pullRequests(first: 100, after: "#{cusor}", orderBy: {field: UPDATED_AT, direction: ASC}) {
-              pageInfo {
-                endCursor
-                hasNextPage
-              }
-              edges {
-                node {
-                  databaseId
-                  createdAt
-                  updatedAt
-                  title
-                  author {
-                    login
-                  }
-                  authorAssociation
-                  state
-                  closedAt
-                  number
-                  publishedAt
-                  closed
-
-                  merged
-                  locked
-
-                  isDraft 
-                  additions
-                  deletions
-                  mergedAt
-                  mergedBy {
-                    login
-                  }
-                  changedFiles 
-                  totalCommentsCount
-
-                }
-              }
-            }
-          }
-        }
-      GQL
+      after = %Q|, after: "#{cusor}"|
     else
-      <<~GQL
-        query {
-          rateLimit {
-            limit
-            cost
-            remaining
-            resetAt
-          }
-          repository(name: "#{name}", owner: "#{owner}") {
-            pullRequests(first: 100, orderBy: {field: UPDATED_AT, direction: ASC}) {
-              pageInfo {
-                endCursor
-                hasNextPage
-              }
-              edges {
-                node {
-                  databaseId
-                  createdAt
-                  updatedAt
-                  title
-                  author {
-                    login
-                  }
-                  authorAssociation
-                  state
-                  closedAt
-                  number
-                  publishedAt
-                  closed
+      after = ''
+    end
 
-                  merged
-                  locked
-
-                  isDraft 
-                  additions
-                  deletions
-                  mergedAt
-                  mergedBy {
-                    login
-                  }
-                  changedFiles 
-                  totalCommentsCount
-
+    <<~GQL
+      query {
+        rateLimit {
+          limit
+          cost
+          remaining
+          resetAt
+        }
+        repository(name: "#{name}", owner: "#{owner}") {
+          pullRequests(first: 100, orderBy: {field: UPDATED_AT, direction: ASC} #{after}) {
+            pageInfo {
+              endCursor
+              hasNextPage
+            }
+            edges {
+              node {
+                databaseId
+                createdAt
+                updatedAt
+                title
+                author {
+                  login
                 }
+                authorAssociation
+                repository {
+                  databaseId
+                }
+                state
+                closedAt
+                number
+                publishedAt
+                closed
+
+                merged
+                locked
+
+                isDraft 
+                additions
+                deletions
+                mergedAt
+                mergedBy {
+                  login
+                }
+                changedFiles 
+                totalCommentsCount
+
               }
             }
           }
         }
-      GQL
-    end
+      }
+    GQL
+
   end
 
   def run

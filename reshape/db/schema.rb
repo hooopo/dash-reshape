@@ -10,10 +10,11 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_02_14_202017) do
+ActiveRecord::Schema[7.0].define(version: 2023_04_12_072434) do
   create_table "forks", charset: "utf8mb4", collation: "utf8mb4_bin", force: :cascade do |t|
     t.bigint "parent"
     t.string "author"
+    t.bigint "user_id"
     t.string "name"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
@@ -32,12 +33,14 @@ ActiveRecord::Schema[7.0].define(version: 2023_02_14_202017) do
     t.string "state"
     t.integer "number"
     t.string "author"
+    t.bigint "user_id"
     t.string "author_association"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["author"], name: "index_issues_on_author"
     t.index ["created_at"], name: "index_issues_on_created_at"
     t.index ["updated_at"], name: "index_issues_on_updated_at"
+    t.index ["user_id"], name: "index_issues_on_user_id"
   end
 
   create_table "pull_requests", charset: "utf8mb4", collation: "utf8mb4_bin", force: :cascade do |t|
@@ -49,6 +52,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_02_14_202017) do
     t.string "state"
     t.integer "number"
     t.string "author"
+    t.bigint "user_id"
     t.string "author_association"
     t.boolean "is_draft"
     t.integer "additions", default: 0
@@ -68,7 +72,10 @@ ActiveRecord::Schema[7.0].define(version: 2023_02_14_202017) do
   create_table "repos", charset: "utf8mb4", collation: "utf8mb4_bin", force: :cascade do |t|
     t.string "name"
     t.string "owner"
+    t.bigint "user_id"
     t.string "license"
+    t.boolean "is_private"
+    t.integer "disk_usage"
     t.string "language"
     t.text "description"
     t.boolean "is_fork"
@@ -76,26 +83,32 @@ ActiveRecord::Schema[7.0].define(version: 2023_02_14_202017) do
     t.integer "fork_count"
     t.integer "stargazer_count"
     t.datetime "pushed_at"
-    t.json "topics"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.boolean "is_in_organization", default: false
     t.string "last_issue_cursor"
     t.string "last_star_cursor"
     t.string "last_pr_cursor"
     t.string "last_fork_cursor"
   end
 
-  create_table "stars", id: false, charset: "utf8mb4", collation: "utf8mb4_bin", force: :cascade do |t|
-    t.bigint "repo_id"
-    t.bigint "user_id"
-    t.string "login"
-    t.string "location"
+  create_table "starred_repos", id: false, charset: "utf8mb4", collation: "utf8mb4_bin", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.bigint "repo_id", null: false
+    t.datetime "starred_at", null: false
+    t.index ["user_id", "repo_id"], name: "index_starred_repos_on_user_id_and_repo_id", unique: true
+  end
+
+  create_table "users", charset: "utf8mb4", collation: "utf8mb4_bin", force: :cascade do |t|
+    t.string "login", null: false
     t.string "company"
-    t.datetime "starred_at"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.string "location"
+    t.string "twitter_username"
+    t.integer "followers_count", default: 0
+    t.integer "following_count", default: 0
     t.string "region"
-    t.index ["repo_id", "user_id"], name: "index_stars_on_repo_id_and_user_id", unique: true
+    t.string "created_at", null: false
+    t.string "updated_at", null: false
   end
 
 end

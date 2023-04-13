@@ -16,6 +16,9 @@ class FetchRepo
           name
           isFork
           pushedAt
+          isInOrganization
+          isPrivate
+          diskUsage
           licenseInfo {
             name
           }
@@ -55,7 +58,10 @@ class FetchRepo
       id: base.dig("databaseId"),
       is_fork: base["isFork"],
       pushed_at: base["pushedAt"],
-      topics: base.dig("repositoryTopics", "edges").map{|x| x.dig("node", "topic", "name")},
+      is_in_organization: base["isInOrganization"],
+      is_private: base["isPrivate"],
+      disk_usage: base["diskUsage"],
+      
       description: base["description"],
       stargazer_count: base["stargazerCount"],
       fork_count: base["forkCount"],

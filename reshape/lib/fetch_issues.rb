@@ -12,80 +12,49 @@ class FetchIssues
 
   def query(cusor)
     if cusor 
-      <<~GQL
-        query {
-          rateLimit {
-            limit
-            cost
-            remaining
-            resetAt
-          }
-          repository(name: "#{name}", owner: "#{owner}") {
-            issues(first: 100, after: "#{cusor}", orderBy: {field: UPDATED_AT, direction: ASC}) {
-              pageInfo {
-                endCursor
-                hasNextPage
-              }
-              edges {
-                node {
-                  databaseId
-                  createdAt
-                  updatedAt
-                  title
-                  author {
-                    login
-                  }
-                  authorAssociation
-                  state
-                  closedAt
-                  number
-                  publishedAt
-                  closed 
-                  locked
-                }
-              }
-            }
-          }
-        }
-      GQL
+      after = %Q|, after: "#{cusor}"|
     else
-      <<~GQL
-        query {
-          rateLimit {
-            limit
-            cost
-            remaining
-            resetAt
-          }
-          repository(name: "#{name}", owner: "#{owner}") {
-            issues(first: 100, orderBy: {field: UPDATED_AT, direction: ASC}) {
-              pageInfo {
-                endCursor
-                hasNextPage
-              }
-              edges {
-                node {
-                  databaseId
-                  createdAt
-                  updatedAt
-                  title
-                  author {
-                    login
-                  }
-                  authorAssociation
-                  state
-                  closedAt
-                  number
-                  publishedAt
-                  closed
-                  locked 
+      after = ''
+    end
+    <<~GQL
+      query {
+        rateLimit {
+          limit
+          cost
+          remaining
+          resetAt
+        }
+        repository(name: "#{name}", owner: "#{owner}") {
+          issues(first: 100, orderBy: {field: UPDATED_AT, direction: ASC} #{after}) {
+            pageInfo {
+              endCursor
+              hasNextPage
+            }
+            edges {
+              node {
+                databaseId
+                createdAt
+                updatedAt
+                title
+                author {
+                  login
                 }
+                repository {
+                  databaseId
+                }
+                authorAssociation
+                state
+                closedAt
+                number
+                publishedAt
+                closed 
+                locked
               }
             }
           }
         }
-      GQL
-    end
+      }
+    GQL
   end
 
   def run

@@ -11,6 +11,7 @@ class CreateIssues < ActiveRecord::Migration[7.0]
       t.string :state
       t.integer :number
       t.string :author
+      t.bigint :user_id, index: true
       t.string :author_association
       t.timestamps
       t.index :updated_at 

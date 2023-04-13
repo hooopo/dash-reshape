@@ -5,6 +5,7 @@ class CreateForks < ActiveRecord::Migration[7.0]
       t.bigint :parent
       
       t.string :author
+      t.bigint :user_id
       t.string :name
       t.timestamps
 

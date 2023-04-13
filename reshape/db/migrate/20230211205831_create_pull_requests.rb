@@ -10,6 +10,8 @@ class CreatePullRequests < ActiveRecord::Migration[7.0]
       t.string :state
       t.integer :number
       t.string :author
+      t.bigint :user_id
+
       t.string :author_association
       
       t.boolean :is_draft
@@ -21,8 +23,6 @@ class CreatePullRequests < ActiveRecord::Migration[7.0]
       t.boolean :merged
 
       t.integer :comments_count, default: 0
-      t.integer :commits_count, default: 0
-      t.integer :reviews_count, default: 0
 
       t.timestamps
       

@@ -1,12 +1,11 @@
 class SyncRegion 
-  def run 
-    return
-    Star.where("location is not null and location <> '' and region is null").limit(5000).each do |star|
-      region = Geocoder.search(star.location)&.first&.country
+  def run
+    User.where("location is not null and location <> '' and region is null").limit(5000).each do |user|
+      region = Geocoder.search(user.location)&.first&.country
       if region.present?
-        Star.where(repo_id: star.repo_id, user_id: star.user_id).update_all(region: region) 
+        User.where(id: user.id).update_all(region: region) 
       else
-        Star.where(repo_id: star.repo_id, user_id: star.user_id).update_all(region: 'N/A') 
+        User.where(id: user.id).update_all(region: 'N/A') 
       end
     end
   end
